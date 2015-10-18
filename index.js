@@ -52,7 +52,7 @@ function Fileupload(options) {
 util.inherits(Fileupload, Resource);
 
 Fileupload.label = "File upload";
-Fileupload.events = ["get", "upload", "delete"];
+Fileupload.events = ["get", "upload", "delete", "uploadcomplete"];
 Fileupload.prototype.clientGeneration = true;
 Fileupload.basicDashboard = {
     settings: [
@@ -86,6 +86,12 @@ Fileupload.prototype.handle = function (ctx, next) {
             remainingFile--;
             if (remainingFile === 0) {
                 debug("Response sent: ", resultFiles);
+                if (self.events.uploadcomplete) {
+                    self.events.uploadcomplete.run(ctx, {files: resultFiles}, function(err) {
+                        if (err) return processDone(err);
+                        renameAndStore(file);
+                    });
+                }
                 return ctx.done(null, resultFiles);
             }
         };
