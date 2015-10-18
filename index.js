@@ -87,10 +87,7 @@ Fileupload.prototype.handle = function (ctx, next) {
             if (remainingFile === 0) {
                 debug("Response sent: ", resultFiles);
                 if (self.events.uploadcomplete) {
-                    self.events.uploadcomplete.run(ctx, {files: resultFiles}, function(err) {
-                        if (err) return processDone(err);
-                        renameAndStore(file);
-                    });
+                    self.events.uploadcomplete.run(ctx, {files: resultFiles});
                 }
                 return ctx.done(null, resultFiles);
             }
